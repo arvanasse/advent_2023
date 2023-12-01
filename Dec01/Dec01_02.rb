@@ -1,4 +1,4 @@
-codes = File.readlines('./input.txt')
+  codes = File.readlines('./input.txt')
 
 # codes = %w[ two1nine
 #             eightwothree
@@ -9,6 +9,14 @@ codes = File.readlines('./input.txt')
 #             7pqrstsixteen]
 
 DIGIT_CONVERSION = {
+  /oneight/ => '18',
+  /twone/ => '21',
+  /threeight/ => '38',
+  /fiveight/ => '58',
+  /sevenine/ => '79',
+  /eightwo/ => '82',
+  /eighthree/ => '83',
+  /nineight/ => '98',
   /one/ => '1',
   /two/ => '2',
   /three/ => '3',
@@ -23,21 +31,8 @@ convert_any = DIGIT_CONVERSION.keys.reduce { |res, test| Regexp.new("#{res}|#{te
 
 line = 0
 result = codes.reduce(0) do |sum, code|
-  line += 1
-  orig = code.dup
-  while (code =~ convert_any) do
-    replacements = DIGIT_CONVERSION.reduce({}) do |h, (text, digit)|
-      position = (code =~ text)
-      position ? h.merge(position => text) : h
-    end
-
-    replacement = replacements[replacements.keys.sort.first]
-    code.gsub!(replacement, DIGIT_CONVERSION[replacement])
-    puts "#{line}: #{orig.strip} => #{code}" if replacements.keys.size > 0
-  end
-
+  DIGIT_CONVERSION.each_pair { |test, replacement| code.gsub!(test, replacement) }
   digits = code.scan(/\d/)
-  puts "#{line}: #{digits.first}#{digits.last}\n\n"
   sum + (digits.empty? ? 0 : (digits.first + digits.last).to_i)
 end
 
